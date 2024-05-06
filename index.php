@@ -27,6 +27,55 @@
             cursor: pointer;
         }
     </style>
+
+<script>
+        // Fungsi untuk mengambil data magang dari server
+        function fetchInternships() {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', 'internships.php', true);
+            xhr.onreadystatechange = function() {
+                if (this.readyState === 4 && this.status === 200) {
+                    displayInternships(JSON.parse(this.responseText));
+                }
+            };
+            xhr.send();
+        }
+
+        // Fungsi untuk menampilkan data magang dalam tabel
+        function displayInternships(data) {
+            var table = document.getElementById('magangTable');
+            table.innerHTML = '';
+            data.forEach(function(item, index) {
+                var row = table.insertRow();
+                row.innerHTML = `
+                    <td><img src="${item.logo}" alt="Logo Perusahaan"></td>
+                    <td>${item.nama_perusahaan}</td>
+                    <td>${item.posisi}</td>
+                    <td>
+                        <button onclick="acceptInternship(${index})">Terima</button>
+                        <button onclick="deleteInternship(${item.id})">Hapus</button>
+                    </td>
+                `;
+            });
+        }
+
+        // Fungsi untuk menghapus data magang
+        function deleteInternship(id) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'hapus_magang.php', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onreadystatechange = function() {
+                if (this.readyState === 4 && this.status === 200) {
+                    alert('Data magang berhasil dihapus.');
+                    fetchInternships();
+                }
+            };
+            xhr.send(JSON.stringify({ id: id }));
+        }
+
+        // Panggil fungsi untuk mengambil data magang saat halaman dimuat
+        window.onload = fetchInternships;
+    </script>
     
 </head>
 
